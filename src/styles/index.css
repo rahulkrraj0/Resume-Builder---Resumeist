@@ -1,0 +1,202 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-paper text-ink-900 font-body antialiased transition-colors duration-300;
+  }
+
+  html.dark body {
+    @apply bg-ink-900 text-paper-100;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+
+  ::selection {
+    @apply bg-moss-100 text-moss-600;
+  }
+
+  /* Visible keyboard focus everywhere */
+  :focus-visible {
+    outline: 2px solid #1F8A70;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/60 dark:bg-ink-800/50 backdrop-blur-xl border border-white/40 dark:border-white/5;
+  }
+
+  .card {
+    @apply glass rounded-2xl shadow-card dark:shadow-card-dark;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-ink-900 dark:bg-paper-100 text-paper-50 dark:text-ink-900 font-semibold px-6 py-3 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none disabled:hover:translate-y-0;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-ink-200 dark:border-white/15 bg-transparent text-ink-800 dark:text-paper-100 font-semibold px-6 py-3 transition-all duration-200 hover:border-ink-900 dark:hover:border-white/40 hover:-translate-y-0.5 disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-accent {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-moss-500 text-white font-semibold px-6 py-3 transition-all duration-200 hover:bg-moss-600 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .eyebrow {
+    @apply font-mono text-xs uppercase tracking-[0.2em] text-moss-500;
+  }
+
+  .section-pad {
+    @apply px-6 sm:px-8 lg:px-12;
+  }
+}
+
+/* Resume manuscript look, used in ResumePreview + PDF export */
+.manuscript {
+  background-image:
+    linear-gradient(transparent 0, transparent 27px, rgba(20,23,31,0.035) 28px),
+    var(--grain, none);
+  background-size: 100% 28px;
+}
+
+.manuscript mark {
+  background: rgba(31,138,112,0.18);
+  color: inherit;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(107,114,128,0.35);
+  border-radius: 999px;
+}
+
+/*
+ * Print output — used by the "Print" button (DownloadButtons -> window.print()).
+ *
+ * `@page { margin: 0 }` is what turns OFF Chrome/Edge's built-in header
+ * (page title + URL) and footer (date + page number) by default: those
+ * browsers only draw them inside the page-margin area, so with no margin
+ * reserved there's nothing to draw. Firefox does not honor this the same
+ * way — it still shows a "Headers and footers" checkbox in its print
+ * dialog that the user has to untick themselves; no CSS/JS on the page can
+ * flip that checkbox for them, it's a browser-level print setting.
+ */
+@media print {
+  @page {
+    size: auto;
+    margin: 6mm;
+  }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  html.dark body {
+    background: #fff !important;
+    color: #14171F !important;
+  }
+
+  #root,
+  #main-content,
+  main {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  header,
+  nav,
+  footer,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Browsers strip background colors on print by default — keep them so
+     header bands / dark sidebars in the templates still show. */
+  #resume-preview-content, #resume-preview-content * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #resume-preview-content {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    margin: 0 auto !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    overflow: visible !important;
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  .resume-section,
+  .resume-section > h3,
+  .resume-section > div,
+  section,
+  h1,
+  h2,
+  h3 {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  .resume-section {
+    page-break-after: auto;
+    break-after: auto;
+  }
+
+  .resume-section + .resume-section {
+    page-break-before: auto;
+    break-before: auto;
+  }
+
+  p,
+  li {
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+    orphans: 3;
+    widows: 3;
+  }
+
+  p + p,
+  li + li {
+    break-before: auto;
+    page-break-before: auto;
+  }
+
+  .resume-section > div > p,
+  .resume-section > div > ul,
+  .resume-section > div > ol {
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+  }
+}
